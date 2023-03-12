@@ -1,12 +1,14 @@
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Scanner;
+import java.util.*;
 
 public class TrainReservationSystem {
 
     private static ArrayList<String> trainDetails=new ArrayList<>();
     private static List<ArrayList<String>> TrainData=new ArrayList<>();
-    private static List<ArrayList<String>> SeatsData=new ArrayList<>();
+    private static Map<String,Integer> emptySeats;
+    private static HashMap<String, Map<String,Integer>> SeatsData= new HashMap<>();
+    private static int PNR=100000001;
+    private static HashSet<String> reserveDates=new HashSet<>();
+    private static Map<String,Integer> seats;
     public static void main(String []args){
         Scanner sc=new Scanner(System.in);
         int Totaltrains=sc.nextInt();
@@ -24,38 +26,46 @@ public class TrainReservationSystem {
             Totaltrains--;
         }
         //sort the lists by train number
-        TrainData.sort((a,b)->{
-            int firstTrainNumber=Integer.parseInt(a.get(0));
-            int secTrainNumber=Integer.parseInt(b.get(0));
-
-            if(firstTrainNumber > secTrainNumber){
-               return 1;
-            }
-            return -1;
-        });
-        SeatsData.sort((a,b)->{
-            int firstTrainNumber=Integer.parseInt(a.get(0));
-            int secTrainNumber=Integer.parseInt(b.get(0));
-
-            if(firstTrainNumber > secTrainNumber){
-                return 1;
-            }
-            return -1;
-        });
-        System.out.println(TrainData);
-        System.out.println(SeatsData);
+//        TrainData.sort((a,b)->{
+//            int firstTrainNumber=Integer.parseInt(a.get(0));
+//            int secTrainNumber=Integer.parseInt(b.get(0));
+//
+//            if(firstTrainNumber > secTrainNumber){
+//               return 1;
+//            }
+//            return -1;
+//        });
+//        SeatsData.sort((a,b)->{
+//            int firstTrainNumber=Integer.parseInt(a.get(0));
+//            int secTrainNumber=Integer.parseInt(b.get(0));
+//
+//            if(firstTrainNumber > secTrainNumber){
+//                return 1;
+//            }
+//            return -1;
+//        });
+//        System.out.println(TrainData);
+//       System.out.println(SeatsData);
 
         //take input from the user
         while(true){
             String userRequest=sc.nextLine();
             String [] userDetails=userRequest.split(" ");
-            if(trainAvailable(userDetails[0],userDetails[1])){
-
+            String Tid=trainID(userDetails[0],userDetails[1]);
+//            int costs=cost(userDetails[0],userDetails[1]);
+            if(Tid.equals("-1")){
+                System.out.println("No Trains Available");
             }
+            else{
+                //here train available
 
+                if(SeatsData.containsKey(Tid)){
+                    Map<String,Integer> TrainSeat=SeatsData.get(Tid);
+                    //required type of seat
+//                    SeatsAvailable(TrainSeat,userDetails[2],userDetails[3],userDetails[4]);
+                }
+            }
         }
-
-
     }
     public static void TrainRoute(String TrainNumber, String from, String to,String TrainSeats){
         //take id and put data
@@ -77,26 +87,76 @@ public class TrainReservationSystem {
     }
     //make another list to store seats
     public static void TrainSeats(String TrainNumber,String TotalTrainSeats){
-        trainDetails=new ArrayList<>();
-        trainDetails.add(TrainNumber);
-        int start=0;
-        for(int end=1; end<TotalTrainSeats.length(); end++){
-            if(TotalTrainSeats.charAt(end)==' '){
+        emptySeats=new HashMap<>();
+        String [] split=TotalTrainSeats.split(" ");
+        char seperator='-';
+        for(int i=1; i<split.length; i++){
+            int breakpoint=split[i].indexOf(seperator);
 
-                trainDetails.add(TotalTrainSeats.substring(start,end));
-                start=end+1;
-            }
-            if(end==TotalTrainSeats.length()-1){
-                trainDetails.add(TotalTrainSeats.substring(start,TotalTrainSeats.length()));
-            }
+            int tSeat = Integer.parseInt(split[i].substring(breakpoint+1));
+
+            String coach = coachName((split[i].substring(0,breakpoint)));
+
+            emptySeats.put(coach,emptySeats.getOrDefault(coach,0)+tSeat);
         }
-        SeatsData.add(trainDetails);
+        SeatsData.put(TrainNumber,emptySeats);
     }
-    //check seat available or not
-    public static Boolean trainAvailable(String from, String to){
+
+    public static String trainID(String from, String to){
         //check in TrainData
-        for(ArrayList<String> train:TrainData){
-            
+        for (ArrayList<String> list : TrainData) {
+            //check for the source is match with the user source
+            if (list.get(1).equals(from)) {
+                if (list.get(2).equals(to)) {
+                    return list.get(0);
+                }
+            }
         }
+        return "-1";
     }
+    public static int costs(String from, String to){
+        //check in TrainData
+        for (ArrayList<String> list : TrainData) {
+            //check for the source is match with the user source
+            if (list.get(1).equals(from)) {
+                if (list.get(2).equals(to)) {
+                    return Integer.parseInt(list.get(3));
+                }
+            }
+        }
+        return -1;
+    }
+    public static String coachName(String name){
+            if(name.charAt(0)=='S'){
+                return "SL";
+            }
+            else if(name.charAt(0)=='B'){
+                return "3A";
+            }
+            else if(name.charAt(0)=='A'){
+                return "2A";
+            }
+            else if(name.charAt(0)=='H'){
+                return "1A";
+            }
+            return "";
+    }
+
+    public static void SeatsAvailable(Map<String,Integer> TrainSeat , String date, String coach, String seat,int costs){
+        //decrease the seat
+        if(reserveDates.contains(date)){
+
+            //either take value from the old
+
+        }
+        else{
+           //than take value from the base
+        }
+        System.out.print(PNR++);
+//        System.out.print(cost(coach,seat,costs));
+
+    }
+
+
+
 }

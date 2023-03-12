@@ -1,0 +1,102 @@
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Scanner;
+
+public class TrainReservationSystem {
+
+    private static ArrayList<String> trainDetails=new ArrayList<>();
+    private static List<ArrayList<String>> TrainData=new ArrayList<>();
+    private static List<ArrayList<String>> SeatsData=new ArrayList<>();
+    public static void main(String []args){
+        Scanner sc=new Scanner(System.in);
+        int Totaltrains=sc.nextInt();
+        while (Totaltrains != 0){
+            String TrainNumber=sc.next();
+            String from=sc.next();
+            String to=sc.next();
+            TrainNumber=sc.next();
+            //add train seats data
+            String TotalTrainSeats=sc.nextLine();
+
+            TrainRoute(TrainNumber,from,to,TotalTrainSeats);
+            TrainSeats(TrainNumber,TotalTrainSeats);
+
+            Totaltrains--;
+        }
+        //sort the lists by train number
+        TrainData.sort((a,b)->{
+            int firstTrainNumber=Integer.parseInt(a.get(0));
+            int secTrainNumber=Integer.parseInt(b.get(0));
+
+            if(firstTrainNumber > secTrainNumber){
+               return 1;
+            }
+            return -1;
+        });
+        SeatsData.sort((a,b)->{
+            int firstTrainNumber=Integer.parseInt(a.get(0));
+            int secTrainNumber=Integer.parseInt(b.get(0));
+
+            if(firstTrainNumber > secTrainNumber){
+                return 1;
+            }
+            return -1;
+        });
+        System.out.println(TrainData);
+        System.out.println(SeatsData);
+
+        //take input from the user
+        while(true){
+            String userRequest=sc.nextLine();
+            String [] userDetails=userRequest.split(" ");
+            if(trainAvailable(userDetails[0],userDetails[1])){
+
+            }
+
+        }
+
+
+    }
+    public static void TrainRoute(String TrainNumber, String from, String to,String TrainSeats){
+        //take id and put data
+        trainDetails=new ArrayList<>();
+        trainDetails.add(TrainNumber);
+        //check starting point
+        char seperator='-';
+        int fromlastIndex=from.indexOf(seperator);
+        trainDetails.add(from.substring(0,fromlastIndex));
+        int tolastIndex=to.indexOf(seperator);
+        trainDetails.add(to.substring(0,tolastIndex));
+        //distance
+        int startDistance=Integer.parseInt(from.substring(fromlastIndex+1));
+        int endDistance=Integer.parseInt(to.substring(tolastIndex+1));
+        trainDetails.add(Integer.toString((endDistance)-(startDistance)));
+
+        //add whole bunch of data in main list
+        TrainData.add(trainDetails);
+    }
+    //make another list to store seats
+    public static void TrainSeats(String TrainNumber,String TotalTrainSeats){
+        trainDetails=new ArrayList<>();
+        trainDetails.add(TrainNumber);
+        int start=0;
+        for(int end=1; end<TotalTrainSeats.length(); end++){
+            if(TotalTrainSeats.charAt(end)==' '){
+
+                trainDetails.add(TotalTrainSeats.substring(start,end));
+                start=end+1;
+            }
+            if(end==TotalTrainSeats.length()-1){
+                trainDetails.add(TotalTrainSeats.substring(start,TotalTrainSeats.length()));
+            }
+        }
+        SeatsData.add(trainDetails);
+    }
+    //check seat available or not
+    public static Boolean trainAvailable(String from, String to){
+        //check in TrainData
+        for(ArrayList<String> train:TrainData){
+            
+        }
+    }
+}
